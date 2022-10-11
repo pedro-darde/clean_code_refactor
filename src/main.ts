@@ -14,7 +14,7 @@ const couponRepository = new CuoponRepositoryDatabase(connection);
 const orderRepository = new OrderRepositoryMemory();
 // itemRepository.save(new Item(1, "Guitarra", 1000));
 
-const preview = new Preview(itemRepository);
+const preview = new Preview(itemRepository, couponRepository);
 const checkout = new Checkout(
   itemRepository,
   orderRepository,

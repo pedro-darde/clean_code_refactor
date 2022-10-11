@@ -1,11 +1,11 @@
 import { CalculateFreight } from "../src/domain/entity/CalculateFreight";
+import { Coupon } from "../src/domain/entity/Coupon";
 import { Dimension } from "../src/domain/entity/Dimension";
 import { Item } from "../src/domain/entity/Item";
 import { Order } from "../src/domain/entity/Order";
 
 const validCPF = "03433172064";
 const validDimension = new Dimension(100, 50, 50, 5);
-const invalidDimension = new Dimension(100, 50, 50, -5);
 describe("Testes do Pedido", () => {
   test("Não deve criar um pedido com cpf inválido", () => {
     expect(() => new Order("1111111111")).toThrow(new Error("CPF Inválido"));
@@ -20,14 +20,16 @@ describe("Testes do Pedido", () => {
   test("Deve criar um pedido com cupom de desconto", () => {
     const orderWithDiscount = new Order(validCPF);
     orderWithDiscount.addItem(new Item(1, "Guitara", 1500, validDimension), 10);
-    orderWithDiscount.addCoupon("VALE50", 25, new Date(2023, 8, 28));
+    orderWithDiscount.addCoupon(
+      new Coupon("VALE50", 25, new Date(2023, 8, 28))
+    );
     expect(orderWithDiscount.getTotalValue()).toBe(11250);
   });
 
   test("Não deve aplicar cupom de desconto expirado", () => {
     const order = new Order(validCPF);
     order.addItem(new Item(1, "Guitarra", 1500, validDimension), 10);
-    order.addCoupon("VALE10", 20, new Date(2022, 8, 21));
+    order.addCoupon(new Coupon("VALE10", 20, new Date(2022, 8, 21)));
     expect(order.getTotalValue()).toBe(1100);
   });
 
@@ -49,16 +51,9 @@ describe("Testes do Pedido", () => {
   test("O peso do item não pode ser negativo", () => {
     const order = new Order(validCPF);
     expect(() =>
-      order.addItem(new Item(1, "Guitarra", 500, invalidDimension), 10)
-    ).toThrow(new Error("Peso do item não pode ser negativo."));
-  });
-
-  test("Nenhuma dimensão do item pode ser negativa", () => {
-    const order = new Order(validCPF);
-    expect(() =>
       order.addItem(
-        new Item(1, "Guitarra", 500, new Dimension(-10, 10, 10, 5)),
-        5
+        new Item(1, "Guitarra", 500, new Dimension(100, 50, 50, -5)),
+        10
       )
     ).toThrow(new Error("As informações de dimensão não podem ser negativas."));
   });
@@ -78,6 +73,6 @@ describe("Testes do Pedido", () => {
   test("Deve gerar o código do pedido", () => {
     const order = new Order(validCPF, new Date(), 1);
 
-    expect(order.getCode()).toBe("202200000000001");
+    expect(order.getCode()).toBe("202200000001");
   });
 });

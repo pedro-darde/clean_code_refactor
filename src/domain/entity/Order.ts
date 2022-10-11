@@ -39,7 +39,7 @@ export class Order {
     }, 0.0);
 
     if (this.coupon) {
-      total -= this.coupon.calculateDiscount(total);
+      total -= this.coupon.calculateDiscount(total, this.date);
     }
 
     if (this.freigth) {
@@ -49,8 +49,8 @@ export class Order {
     return total;
   }
 
-  addCoupon(name: string, discount: number, expiresIn?: Date) {
-    this.coupon = new Coupon(name, discount, expiresIn);
+  addCoupon(coupon: Coupon) {
+    this.coupon = coupon;
   }
 
   getCode() {

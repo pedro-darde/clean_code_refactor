@@ -1,3 +1,4 @@
+import { Coupon } from "../domain/entity/Coupon";
 import { Order } from "../domain/entity/Order";
 import { CouponRepository } from "../domain/repository/CouponRepository";
 import { ItemRepository } from "../domain/repository/ItemRepository";
@@ -14,21 +15,16 @@ export class Checkout {
     let sequence = await this.orderRepository.count();
     const order = new Order(input.cpf, input?.date, ++sequence);
 
+    for (const orderItem of input.orderItems) {
+      const item = await this.itemRepository.getItem(orderItem.idItem);
+      order.addItem(item, orderItem.quantity);
+    }
+
     if (input.couponCode) {
       const couponData = await this.cupomRepository.findByCode(
         input.couponCode
       );
-
-      order.addCoupon(
-        couponData.name,
-        couponData.percentage,
-        couponData.expiresIn
-      );
-    }
-
-    for (const orderItem of input.orderItems) {
-      const item = await this.itemRepository.getItem(orderItem.idItem);
-      order.addItem(item, orderItem.quantity);
+      order.addCoupon(couponData);
     }
 
     await this.orderRepository.save(order);

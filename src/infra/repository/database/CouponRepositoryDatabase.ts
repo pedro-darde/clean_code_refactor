@@ -12,7 +12,6 @@ export class CuoponRepositoryDatabase implements CouponRepository {
     );
 
     if (!couponData) throw new Error("Cupom de desconto inválido.");
-
     return new Coupon(
       couponData.code,
       couponData.percentage,

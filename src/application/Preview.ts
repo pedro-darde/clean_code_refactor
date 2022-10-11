@@ -1,15 +1,26 @@
 import { Order } from "../domain/entity/Order";
+import { CouponRepository } from "../domain/repository/CouponRepository";
 import { ItemRepository } from "../domain/repository/ItemRepository";
 
 export class Preview {
-  constructor(readonly itemRepository: ItemRepository) {}
+  constructor(
+    readonly itemRepository: ItemRepository,
+    readonly couponRepository: CouponRepository
+  ) {}
 
   async execute(input: Input): Promise<number> {
-    const order = new Order(input.cpf);
+    const order = new Order(input.cpf, input?.date);
 
     for (const orderItem of input.orderItems) {
       const item = await this.itemRepository.getItem(orderItem.idItem);
       order.addItem(item, orderItem.quantity);
+    }
+
+    if (input.couponCode) {
+      const couponData = await this.couponRepository.findByCode(
+        input.couponCode
+      );
+      order.addCoupon(couponData);
     }
 
     const total = order.getTotalValue();
@@ -18,6 +29,8 @@ export class Preview {
 }
 
 type Input = {
+  date?: Date;
+  couponCode?: string;
   cpf: string;
   orderItems: { idItem: number; quantity: number }[];
 };

@@ -5,15 +5,15 @@ export class Coupon {
     readonly expiresIn?: Date
   ) {}
 
-  calculateDiscount(total: number) {
-    if (this.expiresIn && this.isExpired()) return 0;
+  calculateDiscount(total: number, now: Date = new Date()) {
+    if (this.isExpired(now)) return 0;
 
     const percentage = this.percentage / 100;
     const valueToDiscount = total * percentage;
     return valueToDiscount;
   }
 
-  private isExpired(now: number = Date.now()) {
-    return !(now > this.expiresIn?.getTime()!);
+  isExpired(now: Date = new Date()) {
+    return this.expiresIn && this.expiresIn.getTime() < now.getTime();
   }
 }
