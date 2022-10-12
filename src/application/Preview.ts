@@ -6,7 +6,7 @@ export class Preview {
   constructor(
     readonly itemRepository: ItemRepository,
     readonly couponRepository: CouponRepository
-  ) {}
+  ) { }
 
   async execute(input: Input): Promise<number> {
     const order = new Order(input.cpf, input?.date);
@@ -20,7 +20,7 @@ export class Preview {
       const couponData = await this.couponRepository.findByCode(
         input.couponCode
       );
-      order.addCoupon(couponData);
+      if (couponData) order.addCoupon(couponData);
     }
 
     const total = order.getTotalValue();

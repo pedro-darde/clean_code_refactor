@@ -9,7 +9,7 @@ export class Order {
   cpf: CPF;
   private items: OrderItem[];
   coupon?: Coupon;
-  orderCode: OrderCode;
+  private orderCode: OrderCode;
   freigth = 0;
 
   constructor(
@@ -24,8 +24,7 @@ export class Order {
 
   addItem(item: Item, quantity: number) {
     if (this.existsItem(item.id)) throw new Error("Item já informado.");
-    const orderItem = new OrderItem(item.id, item.price, quantity);
-    this.items.push(orderItem);
+    this.items.push(new OrderItem(item.id, item.price, quantity));
     this.freigth += new CalculateFreight(item).getFreigth();
   }
 

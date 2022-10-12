@@ -1,14 +1,15 @@
 import { Item } from "./Item";
 
 export class CalculateFreight {
-  DEFAULT_DISTANCE = 1000;
-  MIN_FREIGTH = 10;
+  private DEFAULT_DISTANCE = 1000;
+  private MIN_FREIGTH = 10;
 
-  constructor(readonly item: Item) {}
+  constructor(readonly item: Item) { }
 
   getFreigth() {
     const freightValue = this.calculateFreight();
-    return (freightValue < this.MIN_FREIGTH) ? this.MIN_FREIGTH : freightValue;
+    if (freightValue > 0 && freightValue < this.MIN_FREIGTH) return this.MIN_FREIGTH
+    return freightValue
   }
 
   private calculateFreight() {

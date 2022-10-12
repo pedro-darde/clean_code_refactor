@@ -9,11 +9,11 @@ export class Checkout {
     readonly itemRepository: ItemRepository,
     readonly orderRepository: OrderRepository,
     readonly cupomRepository: CouponRepository
-  ) {}
+  ) { }
 
   async execute(input: Input): Promise<void> {
-    let sequence = await this.orderRepository.count();
-    const order = new Order(input.cpf, input?.date, ++sequence);
+    const nextSequence = (await this.orderRepository.count()) + 1
+    const order = new Order(input.cpf, input?.date, nextSequence);
 
     for (const orderItem of input.orderItems) {
       const item = await this.itemRepository.getItem(orderItem.idItem);
@@ -24,7 +24,7 @@ export class Checkout {
       const couponData = await this.cupomRepository.findByCode(
         input.couponCode
       );
-      order.addCoupon(couponData);
+      if (couponData) order.addCoupon(couponData);
     }
 
     await this.orderRepository.save(order);

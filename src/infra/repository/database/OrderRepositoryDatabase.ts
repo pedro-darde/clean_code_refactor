@@ -3,7 +3,7 @@ import { OrderRepository } from "../../../domain/repository/OrderRepository";
 import Connection from "../../database/Connection";
 
 export class OrderRepositoryDatabase implements OrderRepository {
-  constructor(readonly connection: Connection) {}
+  constructor(readonly connection: Connection) { }
 
   async save(order: Order): Promise<void> {
     await this.connection.query(
@@ -21,7 +21,7 @@ export class OrderRepositoryDatabase implements OrderRepository {
 
     for (const orderItem of order.getItens()) {
       await this.connection.query(
-        "INSERT INTO order_item VALUES (id_item,quantity,price)",
+        "INSERT INTO order_item (id_item,quantity,price) VALUES ($1,$2,$3)",
         [orderItem.idItem, orderItem.quantity, orderItem.price]
       );
     }

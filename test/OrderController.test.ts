@@ -24,7 +24,7 @@ test("Deve testar o preview com desconto pela API", async () => {
         quantity: 1,
       },
     ],
-    couponCode: "VALE50",
+    couponCode: "VALE20",
   });
 
   const preview = response.data;

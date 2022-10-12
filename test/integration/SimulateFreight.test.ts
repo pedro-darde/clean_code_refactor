@@ -1,7 +1,6 @@
 import { SimulateFreight } from "../../src/application/SimulateFreight";
 import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
 import { ItemRepositoryDatabase } from "../../src/infra/repository/database/ItemRepositoryDatabase";
-
 test("Deve calcular o preço do frete com base nos itens do pedido", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const itemRepositoryDatabase = new ItemRepositoryDatabase(pgAdapter);
@@ -15,6 +14,7 @@ test("Deve calcular o preço do frete com base nos itens do pedido", async () =>
       },
     ],
   });
+
 
   expect(total).toBe(60);
   await pgAdapter.close();
