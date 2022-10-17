@@ -1,15 +1,21 @@
 import { Coupon } from "../domain/entity/Coupon";
 import { Order } from "../domain/entity/Order";
+import { RepositoryFactory } from "../domain/factory/RepositoryFactory";
 import { CouponRepository } from "../domain/repository/CouponRepository";
 import { ItemRepository } from "../domain/repository/ItemRepository";
 import { OrderRepository } from "../domain/repository/OrderRepository";
 
 export class Checkout {
+  itemRepository: ItemRepository;
+  orderRepository: OrderRepository;
+  couponRepository: CouponRepository;
   constructor(
-    readonly itemRepository: ItemRepository,
-    readonly orderRepository: OrderRepository,
-    readonly cupomRepository: CouponRepository
-  ) { }
+    repositoryFactory: RepositoryFactory
+  ) {
+    this.itemRepository = repositoryFactory.createItemRepository()
+    this.orderRepository = repositoryFactory.createOrderRepository()
+    this.couponRepository = repositoryFactory.createCouponRepository()
+  }
 
   async execute(input: Input): Promise<void> {
     const nextSequence = (await this.orderRepository.count()) + 1
@@ -21,7 +27,7 @@ export class Checkout {
     }
 
     if (input.couponCode) {
-      const couponData = await this.cupomRepository.findByCode(
+      const couponData = await this.couponRepository.findByCode(
         input.couponCode
       );
       if (couponData) order.addCoupon(couponData);

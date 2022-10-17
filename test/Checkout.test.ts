@@ -3,7 +3,7 @@ import { GetOrdersByCpf } from "../src/application/GetOrdersByCpf";
 import { Dimension } from "../src/domain/entity/Dimension";
 import { Item } from "../src/domain/entity/Item";
 import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
-import { CuoponRepositoryDatabase } from "../src/infra/repository/database/CouponRepositoryDatabase";
+import { DatabaseRepositoryFactory } from "../src/infra/factory/DatabaseRepositoryFactory";
 import { ItemRepositoryMemory } from "../src/infra/repository/memory/ItemRepositoryMemory";
 import { OrderRepositoryMemory } from "../src/infra/repository/memory/OrderRepositoryMemory";
 
@@ -11,15 +11,10 @@ test("Deve criar  um pedido", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const itemRepository = new ItemRepositoryMemory();
   const orderRepository = new OrderRepositoryMemory();
-  const couponRepository = new CuoponRepositoryDatabase(pgAdapter);
   itemRepository.save(
     new Item(1, "Guitarra", 1000, new Dimension(10, 10, 10, 10))
   );
-  const checkout = new Checkout(
-    itemRepository,
-    orderRepository,
-    couponRepository
-  );
+  const checkout = new Checkout(new DatabaseRepositoryFactory(pgAdapter));
   const input = {
     cpf: "03433172064",
     orderItems: [
@@ -44,14 +39,11 @@ test("Deve criar  um pedido com cupom de desconto", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const itemRepository = new ItemRepositoryMemory();
   const orderRepository = new OrderRepositoryMemory();
-  const couponRepository = new CuoponRepositoryDatabase(pgAdapter);
   itemRepository.save(
     new Item(1, "Guitarra", 1000, new Dimension(10, 10, 10, 10))
   );
   const checkout = new Checkout(
-    itemRepository,
-    orderRepository,
-    couponRepository
+    new DatabaseRepositoryFactory(pgAdapter)
   );
   const input = {
     cpf: "03433172064",
@@ -79,14 +71,11 @@ test("Deve criar  um pedido com cupom de desconto expirado", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const itemRepository = new ItemRepositoryMemory();
   const orderRepository = new OrderRepositoryMemory();
-  const couponRepository = new CuoponRepositoryDatabase(pgAdapter);
   itemRepository.save(
     new Item(1, "Guitarra", 1000, new Dimension(10, 10, 10, 10))
   );
   const checkout = new Checkout(
-    itemRepository,
-    orderRepository,
-    couponRepository
+    new DatabaseRepositoryFactory(pgAdapter)
   );
   const input = {
     cpf: "03433172064",

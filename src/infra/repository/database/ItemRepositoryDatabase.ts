@@ -4,7 +4,7 @@ import { ItemRepository } from "../../../domain/repository/ItemRepository";
 import Connection from "../../database/Connection";
 
 export class ItemRepositoryDatabase implements ItemRepository {
-  constructor(readonly connection: Connection) {}
+  constructor(readonly connection: Connection) { }
 
   async save(item: Item): Promise<void> {
     await this.connection.query(

@@ -14,6 +14,6 @@ export class Coupon {
   }
 
   isExpired(now: Date = new Date()) {
-    return this.expiresIn && this.expiresIn.getTime() < now.getTime();
+    return (this.expiresIn && this.expiresIn.getTime() < now.getTime())
   }
 }

@@ -25,6 +25,7 @@ test("Deve testar o preview com desconto pela API", async () => {
       },
     ],
     couponCode: "VALE20",
+    date: new Date(2022, 5, 5)
   });
 
   const preview = response.data;

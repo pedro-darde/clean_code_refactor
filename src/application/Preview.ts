@@ -9,6 +9,10 @@ export class Preview {
   ) { }
 
   async execute(input: Input): Promise<number> {
+    if (input.date) {
+      input.date = typeof input.date === 'string' ? new Date(input.date) : input.date
+    }
+    
     const order = new Order(input.cpf, input?.date);
 
     for (const orderItem of input.orderItems) {

@@ -3,6 +3,7 @@ import { GetOrdersByCpf } from "./application/GetOrdersByCpf";
 import { Preview } from "./application/Preview";
 import OrderController from "./infra/controller/OrderController";
 import PgPromiseAdapter from "./infra/database/PgPromiseAdapter";
+import { DatabaseRepositoryFactory } from "./infra/factory/DatabaseRepositoryFactory";
 import ExpressAdapter from "./infra/http/ExpressAdapter";
 import { CuoponRepositoryDatabase } from "./infra/repository/database/CouponRepositoryDatabase";
 import { ItemRepositoryDatabase } from "./infra/repository/database/ItemRepositoryDatabase";
@@ -15,10 +16,9 @@ const orderRepository = new OrderRepositoryMemory();
 // itemRepository.save(new Item(1, "Guitarra", 1000));
 
 const preview = new Preview(itemRepository, couponRepository);
+
 const checkout = new Checkout(
-  itemRepository,
-  orderRepository,
-  couponRepository
+  new DatabaseRepositoryFactory(connection)
 );
 const getOrdersByCpf = new GetOrdersByCpf(orderRepository);
 
