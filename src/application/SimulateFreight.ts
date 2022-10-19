@@ -2,7 +2,7 @@ import { CalculateFreight } from "../domain/entity/CalculateFreight";
 import { ItemRepository } from "../domain/repository/ItemRepository";
 
 export class SimulateFreight {
-  constructor(readonly itemRepository: ItemRepository) {}
+  constructor(readonly itemRepository: ItemRepository) { }
 
   async execute(input: Input): Promise<Output> {
     let total = 0;
@@ -18,6 +18,8 @@ export class SimulateFreight {
 
 type Input = {
   orderItems: { idItem: number; quantity: number }[];
+  from?: string,
+  to?: string
 };
 
 type Output = {

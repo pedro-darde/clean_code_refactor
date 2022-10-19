@@ -19,3 +19,25 @@ test("Deve calcular o preço do frete com base nos itens do pedido", async () =>
   expect(total).toBe(60);
   await pgAdapter.close();
 });
+
+
+test.skip("Deve simular o frete calculando a distancia", async () => {
+  const pgAdapter = new PgPromiseAdapter();
+  const zipCodeRepository = new ZipCodeRepositoryDatabase(pgAdapter);
+  const simulateFreigth = new SimulateFreight(zipCodeRepository);
+
+  const distance = await simulateFreigth.execute({
+    orderItems: [
+      {
+        idItem: 1,
+        quantity: 2,
+      },
+    ],
+    from: '88015600',
+    to: '22060030'
+  });
+
+
+  expect(distance).toBe(60);
+  await pgAdapter.close();
+});

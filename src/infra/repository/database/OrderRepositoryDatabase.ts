@@ -1,9 +1,10 @@
 import { Order } from "../../../domain/entity/Order";
+import { OrderItem } from "../../../domain/entity/OrderItem";
 import { OrderRepository } from "../../../domain/repository/OrderRepository";
 import Connection from "../../database/Connection";
 
 export class OrderRepositoryDatabase implements OrderRepository {
-  constructor(readonly connection: Connection) {}
+  constructor(readonly connection: Connection) { }
 
   async save(order: Order): Promise<void> {
     const [row] = await this.connection.query(
@@ -32,13 +33,23 @@ export class OrderRepositoryDatabase implements OrderRepository {
       "SELECT * FROM public.order WHERE cpf = $1",
       [cpf]
     );
-    console.log(ordersData);
 
-    for (const order of ordersData) {
-      console.log(order);
+    const orders: Order[] = []
+    for (const orderData of ordersData) {
+      const order = new Order(orderData.cpf, new Date(orderData.issue_date), orderData.id_order)
+      const [orderItemsData] = await this.connection.query('SELECT * FROM public.order_item WHERE id_order = $1', [orderData.id_order])
+
+      for (const orderItemData of orderItemsData) {
+        order.items.push(new OrderItem(orderItemData.id_item, parseFloat(orderItemData.price), orderItemData.quantity))
+      }
+
+      if(orderData.coupon_code) {
+        // order.addCoupon(new )
+      }
     }
 
-    return [new Order("123123123123", new Date(), 1)];
+    return orders
+
   }
 
   async count(): Promise<number> {

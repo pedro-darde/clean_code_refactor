@@ -6,7 +6,6 @@ export class GetOrdersByCpf {
   async execute(cpf: string): Promise<Output[]> {
     const output: Output[] = [];
     const orders = await this.orderRepository.getByCpf(cpf);
-
     for (const order of orders) {
       output.push({
         code: order.getCode(),

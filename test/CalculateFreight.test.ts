@@ -1,4 +1,5 @@
 import { CalculateFreight } from "../src/domain/entity/CalculateFreight"
+import { Coord } from "../src/domain/entity/Coord"
 import { Dimension } from "../src/domain/entity/Dimension"
 import { Item } from "../src/domain/entity/Item"
 
@@ -16,3 +17,13 @@ test("Deve retornar o preço mínimo de frete caso ele seja superior ao valor ca
     const calculateFreight = new CalculateFreight(item);
     expect(calculateFreight.getFreigth()).toBe(10);
 });
+
+test('Deve calcular o valor do frete com distancia', () => {
+    // 100cm, 30cm, 10cm, 3kg
+    const itemDimension = new Dimension(100, 30, 10, 3)
+    const item = new Item(1, 'Guitarra', 2500, itemDimension)
+
+    const distance = 748.22
+    const freight = new CalculateFreight(item).getFreigth(distance)
+    expect(freight).toBe(22.4466)
+})

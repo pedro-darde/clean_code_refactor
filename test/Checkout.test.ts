@@ -4,16 +4,13 @@ import { Dimension } from "../src/domain/entity/Dimension";
 import { Item } from "../src/domain/entity/Item";
 import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
 import { DatabaseRepositoryFactory } from "../src/infra/factory/DatabaseRepositoryFactory";
+import { OrderRepositoryDatabase } from "../src/infra/repository/database/OrderRepositoryDatabase";
 import { ItemRepositoryMemory } from "../src/infra/repository/memory/ItemRepositoryMemory";
 import { OrderRepositoryMemory } from "../src/infra/repository/memory/OrderRepositoryMemory";
 
 test("Deve criar  um pedido", async () => {
   const pgAdapter = new PgPromiseAdapter();
-  const itemRepository = new ItemRepositoryMemory();
-  const orderRepository = new OrderRepositoryMemory();
-  itemRepository.save(
-    new Item(1, "Guitarra", 1000, new Dimension(10, 10, 10, 10))
-  );
+  const orderRepository = new OrderRepositoryDatabase(pgAdapter);
   const checkout = new Checkout(new DatabaseRepositoryFactory(pgAdapter));
   const input = {
     cpf: "03433172064",
@@ -30,6 +27,7 @@ test("Deve criar  um pedido", async () => {
   const getOrdersByCpf = new GetOrdersByCpf(orderRepository);
 
   const orders = await getOrdersByCpf.execute(input.cpf);
+
   expect(orders[0].total).toBe(1100);
   expect(orders[0].code).toBe("202200000001");
   await pgAdapter.close();
@@ -37,11 +35,7 @@ test("Deve criar  um pedido", async () => {
 
 test("Deve criar  um pedido com cupom de desconto", async () => {
   const pgAdapter = new PgPromiseAdapter();
-  const itemRepository = new ItemRepositoryMemory();
-  const orderRepository = new OrderRepositoryMemory();
-  itemRepository.save(
-    new Item(1, "Guitarra", 1000, new Dimension(10, 10, 10, 10))
-  );
+  const orderRepository = new OrderRepositoryDatabase(pgAdapter);
   const checkout = new Checkout(
     new DatabaseRepositoryFactory(pgAdapter)
   );
@@ -69,11 +63,7 @@ test("Deve criar  um pedido com cupom de desconto", async () => {
 
 test("Deve criar  um pedido com cupom de desconto expirado", async () => {
   const pgAdapter = new PgPromiseAdapter();
-  const itemRepository = new ItemRepositoryMemory();
-  const orderRepository = new OrderRepositoryMemory();
-  itemRepository.save(
-    new Item(1, "Guitarra", 1000, new Dimension(10, 10, 10, 10))
-  );
+  const orderRepository = new OrderRepositoryDatabase(pgAdapter);
   const checkout = new Checkout(
     new DatabaseRepositoryFactory(pgAdapter)
   );

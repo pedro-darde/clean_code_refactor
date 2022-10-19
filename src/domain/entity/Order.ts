@@ -7,7 +7,7 @@ import { OrderItem } from "./OrderItem";
 
 export class Order {
   cpf: CPF;
-  private items: OrderItem[];
+  items: OrderItem[];
   coupon?: Coupon;
   private orderCode: OrderCode;
   freigth = 0;
