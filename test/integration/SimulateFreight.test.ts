@@ -1,6 +1,7 @@
 import { SimulateFreight } from "../../src/application/SimulateFreight";
 import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
 import { ItemRepositoryDatabase } from "../../src/infra/repository/database/ItemRepositoryDatabase";
+import { ZipcodeRepositoryDatabase } from "../../src/infra/repository/database/ZipcodeRepositoryDatabse";
 test("Deve calcular o preço do frete com base nos itens do pedido", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const itemRepositoryDatabase = new ItemRepositoryDatabase(pgAdapter);
@@ -21,12 +22,13 @@ test("Deve calcular o preço do frete com base nos itens do pedido", async () =>
 });
 
 
-test.skip("Deve simular o frete calculando a distancia", async () => {
+test("Deve simular o frete calculando a distancia", async () => {
   const pgAdapter = new PgPromiseAdapter();
-  const zipCodeRepository = new ZipCodeRepositoryDatabase(pgAdapter);
-  const simulateFreigth = new SimulateFreight(zipCodeRepository);
+  const zipCodeRepository = new ZipcodeRepositoryDatabase(pgAdapter);
+  const itemRepositoryDatabase = new ItemRepositoryDatabase(pgAdapter);
+  const simulateFreigth = new SimulateFreight(itemRepositoryDatabase, zipCodeRepository);
 
-  const distance = await simulateFreigth.execute({
+  const { total } = await simulateFreigth.execute({
     orderItems: [
       {
         idItem: 1,
@@ -38,6 +40,6 @@ test.skip("Deve simular o frete calculando a distancia", async () => {
   });
 
 
-  expect(distance).toBe(60);
+  expect(total).toBe(60);
   await pgAdapter.close();
 });
