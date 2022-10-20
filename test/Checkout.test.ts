@@ -1,12 +1,9 @@
 import { Checkout } from "../src/application/Checkout";
 import { GetOrdersByCpf } from "../src/application/GetOrdersByCpf";
-import { Dimension } from "../src/domain/entity/Dimension";
-import { Item } from "../src/domain/entity/Item";
+import { Order } from "../src/domain/entity/Order";
 import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
 import { DatabaseRepositoryFactory } from "../src/infra/factory/DatabaseRepositoryFactory";
 import { OrderRepositoryDatabase } from "../src/infra/repository/database/OrderRepositoryDatabase";
-import { ItemRepositoryMemory } from "../src/infra/repository/memory/ItemRepositoryMemory";
-import { OrderRepositoryMemory } from "../src/infra/repository/memory/OrderRepositoryMemory";
 
 test("Deve criar  um pedido", async () => {
   const pgAdapter = new PgPromiseAdapter();
@@ -36,9 +33,7 @@ test("Deve criar  um pedido", async () => {
 test("Deve criar  um pedido com cupom de desconto", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const orderRepository = new OrderRepositoryDatabase(pgAdapter);
-  const checkout = new Checkout(
-    new DatabaseRepositoryFactory(pgAdapter)
-  );
+  const checkout = new Checkout(new DatabaseRepositoryFactory(pgAdapter));
   const input = {
     cpf: "03433172064",
     orderItems: [
@@ -64,9 +59,7 @@ test("Deve criar  um pedido com cupom de desconto", async () => {
 test("Deve criar  um pedido com cupom de desconto expirado", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const orderRepository = new OrderRepositoryDatabase(pgAdapter);
-  const checkout = new Checkout(
-    new DatabaseRepositoryFactory(pgAdapter)
-  );
+  const checkout = new Checkout(new DatabaseRepositoryFactory(pgAdapter));
   const input = {
     cpf: "03433172064",
     orderItems: [

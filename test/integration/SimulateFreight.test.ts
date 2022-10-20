@@ -5,7 +5,8 @@ import { ZipcodeRepositoryDatabase } from "../../src/infra/repository/database/Z
 test("Deve calcular o preço do frete com base nos itens do pedido", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const itemRepositoryDatabase = new ItemRepositoryDatabase(pgAdapter);
-  const simulateFreigth = new SimulateFreight(itemRepositoryDatabase);
+  const zipCodeRepository = new ZipcodeRepositoryDatabase(pgAdapter);
+  const simulateFreigth = new SimulateFreight(itemRepositoryDatabase, zipCodeRepository);
 
   const { total } = await simulateFreigth.execute({
     orderItems: [
@@ -40,6 +41,6 @@ test("Deve simular o frete calculando a distancia", async () => {
   });
 
 
-  expect(total).toBe(60);
+  expect(total).toBe(44.893306680489786);
   await pgAdapter.close();
 });

@@ -15,7 +15,9 @@ export class Order {
   constructor(
     cpf: string,
     readonly date: Date = new Date(),
-    readonly sequence: number = 0
+    readonly sequence: number = 0,
+    readonly total = 0
+    
   ) {
     this.cpf = new CPF(cpf);
     this.items = [];
@@ -25,7 +27,6 @@ export class Order {
   addItem(item: Item, quantity: number) {
     if (this.existsItem(item.id)) throw new Error("Item já informado.");
     this.items.push(new OrderItem(item.id, item.price, quantity));
-    this.freigth += new CalculateFreight(item).getFreigth();
   }
 
   getItens() {

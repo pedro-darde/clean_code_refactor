@@ -4,7 +4,7 @@ import { OrderRepository } from "../../../domain/repository/OrderRepository";
 import Connection from "../../database/Connection";
 
 export class OrderRepositoryDatabase implements OrderRepository {
-  constructor(readonly connection: Connection) { }
+  constructor(readonly connection: Connection) {}
 
   async save(order: Order): Promise<void> {
     const [row] = await this.connection.query(
@@ -34,31 +34,46 @@ export class OrderRepositoryDatabase implements OrderRepository {
       [cpf]
     );
 
-    const orders: Order[] = []
+    const orders: Order[] = [];
     for (const orderData of ordersData) {
-      const order = new Order(orderData.cpf, new Date(orderData.issue_date), orderData.id_order)
-      const [orderItemsData] = await this.connection.query('SELECT * FROM public.order_item WHERE id_order = $1', [orderData.id_order])
+      const order = new Order(
+        orderData.cpf,
+        new Date(orderData.issue_date),
+        orderData.id_order,
+        parseFloat(orderData.total)
+      );
+      const orderItemsData = await this.connection.query(
+        "SELECT * FROM public.order_item WHERE id_order = $1",
+        [orderData.id_order]
+      );
 
-      for (const orderItemData of orderItemsData) {
-        order.items.push(new OrderItem(orderItemData.id_item, parseFloat(orderItemData.price), orderItemData.quantity))
+      if (orderItemsData) {
+        for (const orderItemData of orderItemsData) {
+          order.items.push(
+            new OrderItem(
+              orderItemData.id_item,
+              parseFloat(orderItemData.price),
+              orderItemData.quantity
+            )
+          );
+        }
       }
 
-      if(orderData.coupon_code) {
+      if (orderData.coupon_code) {
         // order.addCoupon(new )
       }
     }
 
-    return orders
-
+    return orders;
   }
 
   async count(): Promise<number> {
     try {
-      // const [row] = await this.connection.query(
-      //   "SELECT COUNT(*)  FROM order",
-      // []
-      // );
-      return 1;
+      const [row] = await this.connection.query(
+        "SELECT COUNT(*)  FROM public.order",
+        []
+      );
+      return row.count;
     } catch (e) {
       console.log(e);
     }

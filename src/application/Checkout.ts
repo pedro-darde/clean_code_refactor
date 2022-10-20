@@ -1,3 +1,4 @@
+import { CalculateFreight } from "../domain/entity/CalculateFreight";
 import { Coupon } from "../domain/entity/Coupon";
 import { Order } from "../domain/entity/Order";
 import { RepositoryFactory } from "../domain/factory/RepositoryFactory";
@@ -24,6 +25,7 @@ export class Checkout {
     for (const orderItem of input.orderItems) {
       const item = await this.itemRepository.getItem(orderItem.idItem);
       order.addItem(item, orderItem.quantity);
+      order.freigth += new CalculateFreight(item).getFreigth() * orderItem.quantity
     }
 
     if (input.couponCode) {
