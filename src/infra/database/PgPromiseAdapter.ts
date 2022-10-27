@@ -3,7 +3,7 @@ import pgp from "pg-promise";
 export default class PgPromiseAdapter implements Connection {
   pgp:any
   constructor() {
-    this.pgp = pgp()("postgres://postgres:postgres@localhost:5432/clean_code");
+    this.pgp = pgp()("postgres://postgres:pass123@localhost:5432/clean_code");
   }
 
   /**

@@ -3,12 +3,13 @@ import { Coupon } from "./Coupon";
 import { CPF } from "./Cpf";
 import { Item } from "./Item";
 import { OrderCode } from "./OrderCode";
+import { OrderCoupon } from "./OrderCoupon";
 import { OrderItem } from "./OrderItem";
 
 export class Order {
   cpf: CPF;
   items: OrderItem[];
-  coupon?: Coupon;
+  coupon?: OrderCoupon;
   private orderCode: OrderCode;
   freigth = 0;
 
@@ -17,7 +18,7 @@ export class Order {
     readonly date: Date = new Date(),
     readonly sequence: number = 0,
     readonly total = 0
-    
+
   ) {
     this.cpf = new CPF(cpf);
     this.items = [];
@@ -39,7 +40,7 @@ export class Order {
     }, 0.0);
 
     if (this.coupon) {
-      total -= this.coupon.calculateDiscount(total, this.date);
+      total -= this.coupon.calculateDiscount(total);
     }
 
     if (this.freigth) {
@@ -50,7 +51,8 @@ export class Order {
   }
 
   addCoupon(coupon: Coupon) {
-    this.coupon = coupon;
+    if (coupon.isExpired(this.date)) return;
+    this.coupon = new OrderCoupon(coupon.name, coupon.percentage);
   }
 
   getCode() {

@@ -7,15 +7,17 @@ import { DatabaseRepositoryFactory } from "./infra/factory/DatabaseRepositoryFac
 import ExpressAdapter from "./infra/http/ExpressAdapter";
 import { CuoponRepositoryDatabase } from "./infra/repository/database/CouponRepositoryDatabase";
 import { ItemRepositoryDatabase } from "./infra/repository/database/ItemRepositoryDatabase";
+import { ZipcodeRepositoryDatabase } from "./infra/repository/database/ZipcodeRepositoryDatabse";
 import { OrderRepositoryMemory } from "./infra/repository/memory/OrderRepositoryMemory";
 
 const connection = new PgPromiseAdapter();
 const itemRepository = new ItemRepositoryDatabase(connection);
 const couponRepository = new CuoponRepositoryDatabase(connection);
 const orderRepository = new OrderRepositoryMemory();
+const zipCodeRepository = new ZipcodeRepositoryDatabase(connection)
 // itemRepository.save(new Item(1, "Guitarra", 1000));
 
-const preview = new Preview(itemRepository, couponRepository);
+const preview = new Preview(itemRepository, couponRepository, zipCodeRepository);
 
 const checkout = new Checkout(
   new DatabaseRepositoryFactory(connection)

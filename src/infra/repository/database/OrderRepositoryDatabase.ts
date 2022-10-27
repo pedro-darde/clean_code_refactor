@@ -1,31 +1,17 @@
+import { Coupon } from "../../../domain/entity/Coupon";
+import { Dimension } from "../../../domain/entity/Dimension";
+import { Item } from "../../../domain/entity/Item";
 import { Order } from "../../../domain/entity/Order";
+import { OrderCoupon } from "../../../domain/entity/OrderCoupon";
 import { OrderItem } from "../../../domain/entity/OrderItem";
 import { OrderRepository } from "../../../domain/repository/OrderRepository";
 import Connection from "../../database/Connection";
 
 export class OrderRepositoryDatabase implements OrderRepository {
-  constructor(readonly connection: Connection) {}
+  constructor(readonly connection: Connection) { }
 
   async save(order: Order): Promise<void> {
-    const [row] = await this.connection.query(
-      "INSERT INTO public.order (coupon_code, coupon_percentage,code,cpf,issue_date, freight, sequence, total) values ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id_order ",
-      [
-        order.coupon?.name ?? null,
-        order.coupon?.percentage ?? null,
-        order.getCode(),
-        order.cpf.value,
-        order.date,
-        order.sequence,
-        order.freigth,
-        order.getTotalValue(),
-      ]
-    );
-    for (const orderItem of order.getItens()) {
-      await this.connection.query(
-        "INSERT INTO public.order_item (id_item,quantity,price, id_order) VALUES ($1,$2,$3,$4)",
-        [orderItem.idItem, orderItem.quantity, orderItem.price, row.id_order]
-      );
-    }
+    throw new Error(`Not implemented`)
   }
 
   async getByCpf(cpf: string): Promise<Order[]> {
@@ -38,45 +24,35 @@ export class OrderRepositoryDatabase implements OrderRepository {
     for (const orderData of ordersData) {
       const order = new Order(
         orderData.cpf,
-        new Date(orderData.issue_date),
-        orderData.id_order,
-        parseFloat(orderData.total)
+        orderData.issue_date,
+        orderData.sequence
       );
-      const orderItemsData = await this.connection.query(
-        "SELECT * FROM public.order_item WHERE id_order = $1",
-        [orderData.id_order]
-      );
-
-      if (orderItemsData) {
-        for (const orderItemData of orderItemsData) {
-          order.items.push(
-            new OrderItem(
-              orderItemData.id_item,
-              parseFloat(orderItemData.price),
-              orderItemData.quantity
-            )
-          );
-        }
+      const [orderItemSData] = await this.connection.query("SELECT * FROM public.order_item WHERE id_order = $1", [orderData.id_order])
+      for (const orderItemData of orderItemSData) {
+        order.items.push(new OrderItem(orderItemData.id_item, parseFloat(orderItemData.price), orderItemData.quantity))
       }
-
       if (orderData.coupon_code) {
-        // order.addCoupon(new )
+        order.coupon = new OrderCoupon(orderData.coupon_code, orderData.coupon_percentage)
       }
+      order.freigth = parseFloat(orderData.freight)
+      orders.push(order)
     }
 
     return orders;
   }
 
   async count(): Promise<number> {
-    try {
-      const [row] = await this.connection.query(
-        "SELECT COUNT(*)  FROM public.order",
-        []
-      );
-      return row.count;
-    } catch (e) {
-      console.log(e);
-    }
-    return 0;
+    const [row] = await this.connection.query(
+      "SELECT COUNT(*)  FROM public.order",
+      []
+    );
+    return row.count;
+
+  }
+
+  async clear(): Promise<void> {
+    await this.connection.query("TRUNCATE public.order_item CASCADE", []);
+    await this.connection.query("TRUNCATE public.order CASCADE", []);
+    await this.connection.query("TRUNCATE public.coupon CASCADE", [])
   }
 }
