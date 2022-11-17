@@ -9,7 +9,7 @@ export class GetOrdersByCpf {
     for (const order of orders) {
       output.push({
         code: order.getCode(),
-        total: order.total,
+        total: order.getTotalValue(),
       });
     }
     return output;

@@ -6,6 +6,10 @@ export class OrderRepositoryMemory implements OrderRepository {
   constructor() {
     this.orders = [];
   }
+  
+  async clear(): Promise<void> {
+    this.orders = [];
+  }
 
   async getByCpf(cpf: string): Promise<Order[]> {
     return this.orders.filter((order) => order.cpf.value === cpf);

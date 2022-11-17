@@ -11,7 +11,24 @@ export class OrderRepositoryDatabase implements OrderRepository {
   constructor(readonly connection: Connection) {}
 
   async save(order: Order): Promise<void> {
-    throw new Error(`Not implemented`);
+    console.log(order.date)
+    const [{ id_order }] = await this.connection.query(
+      "INSERT INTO public.order (code,cpf,issue_date, sequence,freight) VALUES ($1, $2, $3, $4, $5) RETURNING id_order",
+      [
+        order.getCode(),
+        order.cpf.value,
+        order.date,
+        order.sequence,
+        order.freigth,
+      ]
+    );
+
+    for (const orderItem of order.getItens()) {
+      await this.connection.query(
+        "INSERT INTO public.order_item (id_item, id_order, price, quantity) VALUES ($1, $2, $3, $4)",
+        [orderItem.idItem, id_order, orderItem.price, orderItem.quantity]
+      );
+    }
   }
 
   async getByCpf(cpf: string): Promise<Order[]> {
@@ -27,11 +44,11 @@ export class OrderRepositoryDatabase implements OrderRepository {
         orderData.issue_date,
         orderData.sequence
       );
-      const [orderItemSData] = await this.connection.query(
+      const orderItemsData = await this.connection.query(
         "SELECT * FROM public.order_item WHERE id_order = $1",
         [orderData.id_order]
       );
-      for (const orderItemData of orderItemSData) {
+      for (const orderItemData of orderItemsData) {
         order.items.push(
           new OrderItem(
             orderItemData.id_item,
@@ -55,7 +72,7 @@ export class OrderRepositoryDatabase implements OrderRepository {
 
   async count(): Promise<number> {
     const [row] = await this.connection.query(
-      "SELECT COUNT(*)  FROM public.order",
+      "SELECT COUNT(*)::integer as count FROM public.order",
       []
     );
     return row.count;
@@ -63,9 +80,9 @@ export class OrderRepositoryDatabase implements OrderRepository {
 
   async clear(): Promise<void> {
     await Promise.all([
-      this.connection.query("TRUNCATE public.order_item CASCADE", []),
+      // this.connection.query("TRUNCATE public.order_item CASCADE", []),
       this.connection.query("TRUNCATE public.order CASCADE", []),
-      this.connection.query("TRUNCATE public.coupon CASCADE", []),
+      // this.connection.query("TRUNCATE public.coupon CASCADE", []),
     ]);
   }
 }

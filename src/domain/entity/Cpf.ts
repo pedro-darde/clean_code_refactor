@@ -1,7 +1,7 @@
 export class CPF {
-  VALID_LENGTH = 11;
-  FIRST_VERIFIER_DIGIT_FACTOR = 10;
-  SECOND_VERIFIER_DIGIT_FACTOR = 11;
+  private VALID_LENGTH = 11;
+  private FIRST_VERIFIER_DIGIT_FACTOR = 10;
+  private SECOND_VERIFIER_DIGIT_FACTOR = 11;
 
   constructor(readonly value: string) {
     if (!this.isValid(value)) throw new Error("CPF Inválido");

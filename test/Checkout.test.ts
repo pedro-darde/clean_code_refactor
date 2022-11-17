@@ -1,6 +1,5 @@
 import { Checkout } from "../src/application/Checkout";
 import { GetOrdersByCpf } from "../src/application/GetOrdersByCpf";
-import { Order } from "../src/domain/entity/Order";
 import PgPromiseAdapter from "../src/infra/database/PgPromiseAdapter";
 import { DatabaseRepositoryFactory } from "../src/infra/factory/DatabaseRepositoryFactory";
 import { OrderRepositoryDatabase } from "../src/infra/repository/database/OrderRepositoryDatabase";
@@ -24,8 +23,9 @@ test("Deve criar  um pedido", async () => {
   const getOrdersByCpf = new GetOrdersByCpf(orderRepository);
 
   const orders = await getOrdersByCpf.execute(input.cpf);
+  console.log(orders)
 
-  expect(orders[0].total).toBe(1100);
+  expect(orders[0].total).toBe(1030);
   expect(orders[0].code).toBe("202200000001");
   await pgAdapter.close();
 });
@@ -33,6 +33,9 @@ test("Deve criar  um pedido", async () => {
 test("Deve criar  um pedido com cupom de desconto", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const orderRepository = new OrderRepositoryDatabase(pgAdapter);
+  await orderRepository.clear();
+
+
   const checkout = new Checkout(new DatabaseRepositoryFactory(pgAdapter));
   const input = {
     cpf: "03433172064",
@@ -51,7 +54,7 @@ test("Deve criar  um pedido com cupom de desconto", async () => {
   const getOrdersByCpf = new GetOrdersByCpf(orderRepository);
 
   const orders = await getOrdersByCpf.execute(input.cpf);
-  expect(orders[0].total).toBe(900);
+  expect(orders[0].total).toBe(1030);
   expect(orders[0].code).toBe("202200000001");
   await pgAdapter.close();
 });
@@ -59,6 +62,9 @@ test("Deve criar  um pedido com cupom de desconto", async () => {
 test("Deve criar  um pedido com cupom de desconto expirado", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const orderRepository = new OrderRepositoryDatabase(pgAdapter);
+  
+  await orderRepository.clear();
+
   const checkout = new Checkout(new DatabaseRepositoryFactory(pgAdapter));
   const input = {
     cpf: "03433172064",
@@ -77,7 +83,7 @@ test("Deve criar  um pedido com cupom de desconto expirado", async () => {
   const getOrdersByCpf = new GetOrdersByCpf(orderRepository);
 
   const orders = await getOrdersByCpf.execute(input.cpf);
-  expect(orders[0].total).toBe(1100);
+  expect(orders[0].total).toBe(1030);
   expect(orders[0].code).toBe("202300000001");
   await pgAdapter.close();
 });

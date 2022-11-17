@@ -17,7 +17,7 @@ export class Order {
     cpf: string,
     readonly date: Date = new Date(),
     readonly sequence: number = 0,
-    readonly total = 0
+    readonly freight = 0
 
   ) {
     this.cpf = new CPF(cpf);

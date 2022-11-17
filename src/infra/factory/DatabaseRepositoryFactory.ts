@@ -8,14 +8,14 @@ import { ItemRepositoryDatabase } from "../repository/database/ItemRepositoryDat
 import { OrderRepositoryDatabase } from "../repository/database/OrderRepositoryDatabase";
 
 export class DatabaseRepositoryFactory implements RepositoryFactory {
-    constructor(readonly connection: Connection) { }
-    createItemRepository(): ItemRepository {
-        return new ItemRepositoryDatabase(this.connection)
-    }
-    createCouponRepository(): CouponRepository {
-        return new CuoponRepositoryDatabase(this.connection)
-    }
-    createOrderRepository(): OrderRepository {
-        return new OrderRepositoryDatabase(this.connection)
-    }
+  constructor(readonly connection: Connection) {}
+  createItemRepository(): ItemRepository {
+    return new ItemRepositoryDatabase(this.connection);
+  }
+  createCouponRepository(): CouponRepository {
+    return new CuoponRepositoryDatabase(this.connection);
+  }
+  createOrderRepository(): OrderRepository {
+    return new OrderRepositoryDatabase(this.connection);
+  }
 }
