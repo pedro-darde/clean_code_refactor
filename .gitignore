@@ -1,2 +1,2 @@
-node_modules/
-coverage/
+./checkout/node_modules
+./freight/node_modules
