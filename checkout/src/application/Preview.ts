@@ -1,14 +1,11 @@
-import { CalculateFreight } from "../domain/entity/CalculateFreight";
-import { DistanceCalculator } from "../domain/entity/DistanceCalculator";
 import { Order } from "../domain/entity/Order";
 import { CouponRepository } from "../domain/repository/CouponRepository";
-import { ItemRepository } from "../domain/repository/ItemRepository";
-import { ZipcodeRepository } from "../domain/repository/ZipcodeRepository";
 import CalculateFreightGateway from "./gateway/CalculateFreightGateway";
+import GetItemGateway from "./gateway/GetItemGateway";
 
 export class Preview {
   constructor(
-    readonly itemRepository: ItemRepository,
+    readonly getItemGateway: GetItemGateway,
     readonly couponRepository: CouponRepository,
     readonly calculateFreightGateway: CalculateFreightGateway
   ) { }
@@ -24,11 +21,13 @@ export class Preview {
     const order = new Order(input.cpf, input?.date);
 
     for (const orderItem of input.orderItems) {
-      const item = await this.itemRepository.getItem(orderItem.idItem);
+      const item = await this.getItemGateway.getItem(orderItem.idItem);
       order.addItem(item, orderItem.quantity);
       orderItems.push({ volume: item.getVolume(), density: item.getDensity(), quantity: orderItem.quantity })
     }
     order.freigth = await this.calculateFreightGateway.calculate(orderItems, input.from, input.to)
+
+    console.log(order.freigth)
 
     if (input.couponCode) {
       const couponData = await this.couponRepository.findByCode(

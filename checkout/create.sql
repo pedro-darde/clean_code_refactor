@@ -11,10 +11,10 @@ drop table if exists public.item;
 
 
 drop table if exists public.zipcode
-create table public.item (id_item serial primary key, description text, price numeric, width integer, height integer, length integer, weight integer);
+create table public.item (id_item serial primary key, description text, price numeric, width integer, height integer, length integer, weigth integer);
 
 
-insert into public.item (description, price, width, height, length, weight)
+insert into public.item (description, price, width, height, length, weigth)
 values ('Guitarra',
 									1000,
 									100,
@@ -23,7 +23,7 @@ values ('Guitarra',
 									3);
 
 
-insert into public.item (description, price, width, height, length, weight)
+insert into public.item (description, price, width, height, length, weigth)
 values ('Amplificador',
 									5000,
 									50,
@@ -32,7 +32,7 @@ values ('Amplificador',
 									20);
 
 
-insert into public.item (description, price, width, height, length, weight)
+insert into public.item (description, price, width, height, length, weigth)
 values ('Cabo',
 									30,
 									10,

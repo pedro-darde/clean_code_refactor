@@ -10,7 +10,11 @@ export class GetIttem {
       description: itemData.description,
       price: itemData.price,
       volume: itemData.getVolume(),
-      density: itemData.getDensity()
+      density: itemData.getDensity(),
+      height: itemData.dimension?.height,
+      width: itemData.dimension?.width,
+      depth: itemData.dimension?.depth,
+      weigth: itemData.dimension?.weigth,
     }
   }
 }
@@ -21,5 +25,9 @@ type Output = {
   description: string,
   price: number,
   volume: number,
-  density: number
+  density: number,
+  width?: number,
+  depth?: number,
+  height?: number,
+  weigth?: number
 };

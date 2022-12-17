@@ -27,7 +27,7 @@ export class ItemRepositoryDatabase implements ItemRepository {
         itemData.height,
         itemData.width,
         itemData.length,
-        itemData.weight
+        itemData.weigth
       )
     );
   }

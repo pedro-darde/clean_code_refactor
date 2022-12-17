@@ -1,20 +1,14 @@
 import { Preview } from "../../src/application/Preview";
-import { Dimension } from "../../src/domain/entity/Dimension";
-import { Item } from "../../src/domain/entity/Item";
 import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
 import CalculateFreightHttpGateway from "../../src/infra/gateway/CalculateFreightHttpGateway";
-import calculateFreightHttpGateway from "../../src/infra/gateway/CalculateFreightHttpGateway";
+import GetItemHttpGateway from "../../src/infra/gateway/GetItemHttpGateway";
 import { CuoponRepositoryDatabase } from "../../src/infra/repository/database/CouponRepositoryDatabase";
-import { ItemRepositoryMemory } from "../../src/infra/repository/memory/ItemRepositoryMemory";
 test("Deve simular um pedido com distância", async () => {
   const pgAdapter = new PgPromiseAdapter();
   const couponRepository = new CuoponRepositoryDatabase(pgAdapter);
-  const itemRepository = new ItemRepositoryMemory();
-  itemRepository.save(
-    new Item(1, "Guitarra", 1000, new Dimension(10, 10, 10, 10))
-  );
   const calculateFreightGateway = new CalculateFreightHttpGateway()
-  const preview = new Preview(itemRepository, couponRepository, calculateFreightGateway);
+  const getItemGateway = new GetItemHttpGateway()
+  const preview = new Preview(getItemGateway, couponRepository, calculateFreightGateway);
 
   const input = {
     cpf: "03433172064",

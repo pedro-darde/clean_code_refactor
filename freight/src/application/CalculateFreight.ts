@@ -16,6 +16,7 @@ export class CalculateFreight {
     for (const itemData of input.orderItems) {
       total += new FreightCalculator(itemData.volume, itemData.density).getFreigth(distance) * itemData.quantity;
     }
+
     return { total };
   }
 }
