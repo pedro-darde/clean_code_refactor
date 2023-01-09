@@ -1,4 +1,3 @@
-import StockCalculator from "../domain/entity/StockCalculator"
 import StockEntry from "../domain/entity/StockEntry"
 import StockRepository from "../domain/repository/StockRepository"
 

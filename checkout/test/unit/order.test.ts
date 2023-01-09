@@ -20,7 +20,7 @@ describe("Testes do Pedido", () => {
     const orderWithDiscount = new Order(validCPF);
     orderWithDiscount.addItem(new Item(1, "Guitara", 1500), 1);
     orderWithDiscount.addCoupon(
-      new Coupon("VALE50", 50, new Date(2022, 11, 28))
+      new Coupon("VALE50", 50, new Date(2023, 11, 28))
     );
     expect(orderWithDiscount.getTotalValue()).toBe(750);
   });
@@ -52,6 +52,6 @@ describe("Testes do Pedido", () => {
 
   test("Deve gerar o código do pedido", () => {
     const order = new Order(validCPF, new Date(), 1);
-    expect(order.getCode()).toBe("202200000001");
+    expect(order.getCode()).toBe("202300000001");
   });
 });

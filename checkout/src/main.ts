@@ -9,6 +9,7 @@ import RestController from "./infra/controller/RestController";
 import PgPromiseAdapter from "./infra/database/PgPromiseAdapter";
 import { DatabaseRepositoryFactory } from "./infra/factory/DatabaseRepositoryFactory";
 import CalculateFreightHttpGateway from "./infra/gateway/CalculateFreightHttpGateway";
+import DecrementStockHttpGateway from "./infra/gateway/DecrementStockHttpGateway";
 import GetItemHttpGateway from "./infra/gateway/GetItemHttpGateway";
 import ExpressAdapter from "./infra/http/ExpressAdapter";
 import { CuoponRepositoryDatabase } from "./infra/repository/database/CouponRepositoryDatabase";
@@ -21,13 +22,18 @@ const itemRepository = new ItemRepositoryDatabase(connection);
 const couponRepository = new CuoponRepositoryDatabase(connection);
 const orderRepository = new OrderRepositoryMemory();
 const zipCodeRepository = new ZipcodeRepositoryDatabase(connection)
-// itemRepository.save(new Item(1, "Guitarra", 1000));
 const calculateFreightGateway = new CalculateFreightHttpGateway()
 const getItemGateway = new GetItemHttpGateway()
+const decrementStockGateway = new DecrementStockHttpGateway()
+
+
 const preview = new Preview(getItemGateway, couponRepository, calculateFreightGateway);
 
 const checkout = new Checkout(
-  new DatabaseRepositoryFactory(connection)
+  new DatabaseRepositoryFactory(connection),
+  getItemGateway,
+  calculateFreightGateway,
+  decrementStockGateway
 );
 const getOrdersByCpf = new GetOrdersByCpf(orderRepository);
 const simulateFreight = new SimulateFreight(itemRepository, zipCodeRepository)
